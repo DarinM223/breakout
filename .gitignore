@@ -1,0 +1,6 @@
+CMakeCache.txt
+CMakeFiles/
+Makefile
+app
+cmake_install.cmake
+.ycm_extra_conf.py
