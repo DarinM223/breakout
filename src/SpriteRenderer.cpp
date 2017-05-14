@@ -1,7 +1,7 @@
 #include "SpriteRenderer.h"
 #include "glm/gtc/matrix_transform.hpp"
 
-SpriteRenderer::SpriteRenderer() {
+SpriteRenderer::SpriteRenderer(Shader& shader) : shader_(shader) {
   GLuint vbo;
   GLfloat vertices[] = {0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
@@ -21,9 +21,9 @@ SpriteRenderer::SpriteRenderer() {
   glBindVertexArray(0);
 }
 
-void SpriteRenderer::drawSprite(const Shader& shader, const Texture& texture,
-                                const RendererOptions& options) const {
-  shader.use();
+void SpriteRenderer::drawSprite(Texture& texture,
+                                const RendererOptions& options) {
+  this->shader_.use();
   glm::mat4 model{};
   model = glm::translate(model, glm::vec3{options.position, 0.0f});
 
@@ -35,8 +35,8 @@ void SpriteRenderer::drawSprite(const Shader& shader, const Texture& texture,
 
   model = glm::scale(model, glm::vec3{options.size, 1.0f});
 
-  shader.setMatrix4("model", model);
-  shader.setVector3("spriteColor", options.color);
+  this->shader_.setMatrix4("model", model);
+  this->shader_.setVector3("spriteColor", options.color);
 
   glActiveTexture(GL_TEXTURE0);
   texture.bind();

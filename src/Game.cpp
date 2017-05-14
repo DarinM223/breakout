@@ -19,7 +19,7 @@ void Game::init() {
 
   this->manager_.loadTexture("./textures/awesomeface.png",
                              Dimensions{DimensionsType::Image}, true, "face");
-  this->renderer = std::make_unique<SpriteRenderer>();
+  this->renderer = std::make_unique<SpriteRenderer>(shader);
 }
 
 void Game::processInput() {}
@@ -27,10 +27,9 @@ void Game::processInput() {}
 void Game::update() {}
 
 void Game::render() {
-  auto &shader = this->manager_.getShader("sprite");
   auto &texture = this->manager_.getTexture("face");
   RendererOptions options{};
-  this->renderer->drawSprite(shader, texture, options);
+  this->renderer->drawSprite(texture, options);
 }
 
 void Game::updateTime(GLfloat time) {

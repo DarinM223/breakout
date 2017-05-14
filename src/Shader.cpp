@@ -123,17 +123,17 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath) {
   }
 }
 
-void Shader::setMatrix4(const char* name, const glm::mat4& matrix) const {
+void Shader::setMatrix4(const char* name, const glm::mat4& matrix) {
   auto location = glGetUniformLocation(this->program_, name);
   glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Shader::setInteger(const char* name, GLint value) const {
+void Shader::setInteger(const char* name, GLint value) {
   auto location = glGetUniformLocation(this->program_, name);
   glUniform1i(location, value);
 }
 
-void Shader::setVector3(const char* name, const glm::vec3& value) const {
+void Shader::setVector3(const char* name, const glm::vec3& value) {
   auto location = glGetUniformLocation(this->program_, name);
   glUniform3f(location, value.x, value.y, value.z);
 }

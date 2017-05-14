@@ -14,8 +14,8 @@ class ResourceManager {
   void loadTexture(std::string path, const Dimensions& dimensions, bool alpha,
                    const std::string& name);
 
-  const Shader& getShader(const std::string& name) const;
-  const Texture& getTexture(const std::string& name) const;
+  Shader& getShader(const std::string& name);
+  Texture& getTexture(const std::string& name);
 
  private:
   std::unordered_map<std::string, Shader> shaders_;

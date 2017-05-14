@@ -19,10 +19,10 @@ void ResourceManager::loadTexture(std::string path,
   this->textures_.emplace(name, std::move(texture));
 }
 
-const Shader& ResourceManager::getShader(const std::string& name) const {
-  return this->shaders_.at(name);
+Shader& ResourceManager::getShader(const std::string& name) {
+  return this->shaders_.find(name)->second;
 }
 
-const Texture& ResourceManager::getTexture(const std::string& name) const {
-  return this->textures_.at(name);
+Texture& ResourceManager::getTexture(const std::string& name) {
+  return this->textures_.find(name)->second;
 }

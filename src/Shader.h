@@ -61,11 +61,11 @@ class Shader {
     return *this;
   }
 
-  void use() const noexcept { glUseProgram(this->program_); }
+  void use() noexcept { glUseProgram(this->program_); }
   GLuint program() const noexcept { return this->program_; }
-  void setMatrix4(const char *name, const glm::mat4 &matrix) const;
-  void setInteger(const char *name, GLint value) const;
-  void setVector3(const char *name, const glm::vec3 &value) const;
+  void setMatrix4(const char *name, const glm::mat4 &matrix);
+  void setInteger(const char *name, GLint value);
+  void setVector3(const char *name, const glm::vec3 &value);
 
  private:
   void release() { glDeleteProgram(this->program_); }

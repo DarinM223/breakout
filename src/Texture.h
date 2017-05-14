@@ -48,7 +48,7 @@ class Texture {
     return *this;
   }
 
-  void bind() const { glBindTexture(GL_TEXTURE_2D, this->texture_); }
+  void bind() { glBindTexture(GL_TEXTURE_2D, this->texture_); }
 
  private:
   void release() { glDeleteTextures(1, &this->texture_); }
