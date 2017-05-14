@@ -1,8 +1,8 @@
 #include "Texture.h"
 #include "Image.h"
 
-Texture::Texture(std::string path, Dimensions dimensions,
-                 TextureOptions options) {
+Texture::Texture(std::string path, const Dimensions& dimensions,
+                 const TextureOptions& options) {
   glGenTextures(1, &this->texture_);
   glBindTexture(GL_TEXTURE_2D, this->texture_);
   {

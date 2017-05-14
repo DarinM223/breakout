@@ -7,14 +7,15 @@ void ResourceManager::loadShader(std::string vertexPath,
   this->shaders_.emplace(name, std::move(shader));
 }
 
-void ResourceManager::loadTexture(std::string path, Dimensions dimensions,
-                                  bool alpha, const std::string& name) {
+void ResourceManager::loadTexture(std::string path,
+                                  const Dimensions& dimensions, bool alpha,
+                                  const std::string& name) {
   TextureOptions options{};
   if (alpha) {
     options.internalFormat = GL_RGBA;
     options.imageFormat = GL_RGBA;
   }
-  Texture texture{std::move(path), std::move(dimensions), std::move(options)};
+  Texture texture{std::move(path), dimensions, options};
   this->textures_.emplace(name, std::move(texture));
 }
 

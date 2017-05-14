@@ -10,6 +10,9 @@ enum class DimensionsType : bool {
 };
 
 struct Dimensions {
+  Dimensions(DimensionsType type) : type(type), width(0), height(0) {}
+  Dimensions(DimensionsType type, int width, int height)
+      : type(type), width(width), height(height) {}
   DimensionsType type;
   int width;
   int height;
@@ -26,7 +29,8 @@ struct TextureOptions {
 
 class Texture {
  public:
-  Texture(std::string path, Dimensions dimensions, TextureOptions options);
+  Texture(std::string path, const Dimensions &dimensions,
+          const TextureOptions &options);
   ~Texture() { this->release(); }
 
   Texture() = delete;
@@ -44,7 +48,7 @@ class Texture {
     return *this;
   }
 
-  void bind() { glBindTexture(GL_TEXTURE_2D, this->texture_); }
+  void bind() const { glBindTexture(GL_TEXTURE_2D, this->texture_); }
 
  private:
   void release() { glDeleteTextures(1, &this->texture_); }

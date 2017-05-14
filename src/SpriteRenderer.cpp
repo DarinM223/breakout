@@ -1,6 +1,47 @@
 #include "SpriteRenderer.h"
+#include "glm/gtc/matrix_transform.hpp"
 
-void SpriteRenderer::drawSprite(const Texture &texture,
-                                RendererOptions options) const {
-  // TODO(DarinM223): implement this
+SpriteRenderer::SpriteRenderer() {
+  GLuint vbo;
+  GLfloat vertices[] = {0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+                        1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f};
+
+  glGenVertexArrays(1, &this->vao_);
+  glGenBuffers(1, &vbo);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  glBindVertexArray(this->vao_);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                        (GLvoid*)0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
+}
+
+void SpriteRenderer::drawSprite(const Shader& shader, const Texture& texture,
+                                const RendererOptions& options) const {
+  shader.use();
+  glm::mat4 model{};
+  model = glm::translate(model, glm::vec3{options.position, 0.0f});
+
+  model = glm::translate(
+      model, glm::vec3{0.5f * options.size.x, 0.5f * options.size.y, 0.0f});
+  model = glm::rotate(model, options.rotate, glm::vec3{0.0f, 0.0f, 1.0f});
+  model = glm::translate(
+      model, glm::vec3{-0.5f * options.size.x, -0.5f * options.size.y, 0.0f});
+
+  model = glm::scale(model, glm::vec3{options.size, 1.0f});
+
+  shader.setMatrix4("model", model);
+  shader.setVector3("spriteColor", options.color);
+
+  glActiveTexture(GL_TEXTURE0);
+  texture.bind();
+
+  glBindVertexArray(this->vao_);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glBindVertexArray(0);
 }

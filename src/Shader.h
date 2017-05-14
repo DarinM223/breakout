@@ -5,6 +5,7 @@
 #include <exception>
 #include <string>
 #include <tuple>
+#include "glm/glm.hpp"
 
 class ShaderLoadException : public std::exception {
  public:
@@ -60,8 +61,11 @@ class Shader {
     return *this;
   }
 
-  void use();
+  void use() const noexcept { glUseProgram(this->program_); }
   GLuint program() const noexcept { return this->program_; }
+  void setMatrix4(const char *name, const glm::mat4 &matrix) const;
+  void setInteger(const char *name, GLint value) const;
+  void setVector3(const char *name, const glm::vec3 &value) const;
 
  private:
   void release() { glDeleteProgram(this->program_); }

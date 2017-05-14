@@ -3,6 +3,9 @@
 
 #include <GL/glew.h>
 #include <array>
+#include <memory>
+#include "ResourceManager.h"
+#include "SpriteRenderer.h"
 
 class Game {
  public:
@@ -12,20 +15,22 @@ class Game {
     Win,
   };
 
-  Game(int width, int height);
-  ~Game();
+  Game(int width, int height, ResourceManager &manager);
   void init();
   void processInput();
   void update();
   void render();
+  void updateTime(GLfloat time);
 
-  void setDT(GLfloat dt) { this->dt_ = dt; }
   void setKey(int key, bool value) { this->keys_[key] = value; }
 
  private:
   std::array<bool, 1024> keys_{};
   State state_{State::Active};
-  GLfloat dt_;
+  GLfloat dt_{0.0f};
+  GLfloat lastTime_{0.0f};
+  ResourceManager &manager_;
+  std::unique_ptr<SpriteRenderer> renderer{nullptr};
   int width_;
   int height_;
 };

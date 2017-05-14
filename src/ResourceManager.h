@@ -7,11 +7,11 @@
 
 class ResourceManager {
  public:
-  ResourceManager();
+  ResourceManager(){};
 
   void loadShader(std::string vertexPath, std::string fragmentPath,
                   const std::string& name);
-  void loadTexture(std::string path, Dimensions dimensions, bool alpha,
+  void loadTexture(std::string path, const Dimensions& dimensions, bool alpha,
                    const std::string& name);
 
   const Shader& getShader(const std::string& name) const;

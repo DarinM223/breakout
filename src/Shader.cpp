@@ -2,6 +2,7 @@
 #include <fstream>
 #include <memory>
 #include <sstream>
+#include "glm/gtc/type_ptr.hpp"
 
 class ScopedShader {
  public:
@@ -122,4 +123,17 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath) {
   }
 }
 
-void Shader::use() { glUseProgram(this->program_); }
+void Shader::setMatrix4(const char* name, const glm::mat4& matrix) const {
+  auto location = glGetUniformLocation(this->program_, name);
+  glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void Shader::setInteger(const char* name, GLint value) const {
+  auto location = glGetUniformLocation(this->program_, name);
+  glUniform1i(location, value);
+}
+
+void Shader::setVector3(const char* name, const glm::vec3& value) const {
+  auto location = glGetUniformLocation(this->program_, name);
+  glUniform3f(location, value.x, value.y, value.z);
+}
