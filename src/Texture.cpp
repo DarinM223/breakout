@@ -17,7 +17,7 @@ Texture::Texture(std::string path, const Dimensions& dimensions,
       height = dimensions.height;
     } else {
       width = image.width();
-      width = image.height();
+      height = image.height();
     }
     glTexImage2D(GL_TEXTURE_2D, 0, options.internalFormat, width, height, 0,
                  options.imageFormat, GL_UNSIGNED_BYTE, image.get());

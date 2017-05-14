@@ -6,6 +6,9 @@
 #include "glm/glm.hpp"
 
 struct RendererOptions {
+  RendererOptions(glm::vec2 position, glm::vec2 size, GLfloat rotate,
+                  glm::vec3 color)
+      : position(position), size(size), rotate(rotate), color(color) {}
   glm::vec2 position{0, 0};
   glm::vec2 size{10, 10};
   GLfloat rotate{0.0f};

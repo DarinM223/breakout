@@ -28,7 +28,7 @@ void Game::update() {}
 
 void Game::render() {
   auto &texture = this->manager_.getTexture("face");
-  RendererOptions options{};
+  RendererOptions options{{200, 200}, {300, 400}, 45.0f, {0.0f, 1.0f, 0.0f}};
   this->renderer->drawSprite(texture, options);
 }
 
