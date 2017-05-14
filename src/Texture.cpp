@@ -1,9 +1,8 @@
 #include "Texture.h"
 #include "Image.h"
 
-Texture::Texture(std::string path, std::optional<Dimensions> dimensions,
-                 GLint wrapS, GLint wrapT, GLint internalFormat,
-                 GLint imageFormat, GLint filterMin, GLint filterMag) {
+Texture::Texture(std::string path, Dimensions dimensions,
+                 TextureOptions options) {
   glGenTextures(1, &this->texture_);
   glBindTexture(GL_TEXTURE_2D, this->texture_);
   {
@@ -13,22 +12,19 @@ Texture::Texture(std::string path, std::optional<Dimensions> dimensions,
     }
 
     int width, height;
-    if (auto unwrappedDimensions = dimensions) {
-      width = unwrappedDimensions->width;
-      height = unwrappedDimensions->height;
+    if (dimensions.type == DimensionsType::Custom) {
+      width = dimensions.width;
+      height = dimensions.height;
     } else {
       width = image.width();
-      height = image.height();
+      width = image.height();
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
-                 imageFormat, GL_UNSIGNED_BYTE, image.get());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, options.internalFormat, width, height, 0,
+                 options.imageFormat, GL_UNSIGNED_BYTE, image.get());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, options.wrapS);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, options.wrapT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, options.filterMin);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, options.filterMag);
   }
   glBindTexture(GL_TEXTURE_2D, 0);
 }
-
-void Texture::bind() { glBindTexture(GL_TEXTURE_2D, this->texture_); }

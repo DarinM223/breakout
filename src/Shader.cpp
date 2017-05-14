@@ -6,10 +6,27 @@
 class ScopedShader {
  public:
   ScopedShader(GLuint shader) : shader_(shader) {}
-  ~ScopedShader() { glDeleteShader(this->shader_); }
+  ~ScopedShader() { this->release(); }
+
+  ScopedShader() = delete;
+  ScopedShader(const ScopedShader&) = delete;
+  ScopedShader& operator=(const ScopedShader&) = delete;
+
+  ScopedShader(ScopedShader&& other) {
+    this->shader_ = other.shader_;
+    other.shader_ = -1;
+  }
+  ScopedShader& operator=(ScopedShader&& other) {
+    this->release();
+    this->shader_ = other.shader_;
+    other.shader_ = -1;
+    return *this;
+  }
+
   GLuint get() const noexcept { return this->shader_; }
 
  private:
+  void release() { glDeleteShader(this->shader_); }
   GLuint shader_;
 };
 
