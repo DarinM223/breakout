@@ -43,10 +43,28 @@ class ProgramLinkException : public std::exception {
 class Shader {
  public:
   Shader(std::string vertexPath, std::string fragmentPath);
+  ~Shader() { this->release(); }
+
+  Shader() = delete;
+  Shader(const Shader &) = delete;
+  Shader &operator=(const Shader &) = delete;
+
+  Shader(Shader &&other) {
+    this->program_ = other.program_;
+    other.program_ = -1;
+  }
+  Shader &operator=(Shader &&other) {
+    this->release();
+    this->program_ = other.program_;
+    other.program_ = -1;
+    return *this;
+  }
+
   void use();
   GLuint program() const noexcept { return this->program_; }
 
  private:
+  void release() { glDeleteProgram(this->program_); }
   std::tuple<std::string, std::string> getShaderSrcs(std::string vertexPath,
                                                      std::string fragmentPath);
 
