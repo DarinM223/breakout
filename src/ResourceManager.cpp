@@ -18,10 +18,10 @@ void ResourceManager::loadTexture(std::string path, Dimensions dimensions,
   this->textures_.emplace(name, std::move(texture));
 }
 
-const Shader& ResourceManager::getShader(std::string name) const {
-  return this->shaders_.at(std::move(name));
+const Shader& ResourceManager::getShader(const std::string& name) const {
+  return this->shaders_.at(name);
 }
 
-const Texture& ResourceManager::getTexture(std::string name) const {
-  return this->textures_.at(std::move(name));
+const Texture& ResourceManager::getTexture(const std::string& name) const {
+  return this->textures_.at(name);
 }
