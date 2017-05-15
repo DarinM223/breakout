@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <GLFW/glfw3.h>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -18,12 +19,10 @@ void Game::init() {
   shader.setMatrix4("projection", projection);
 
   // Load textures.
-  manager_.loadTexture("./textures/awesomeface.png",
-                       Dimensions{DimensionsType::Image}, true, "face");
-  manager_.loadTexture("./textures/block.png",
-                       Dimensions{DimensionsType::Image}, false, "block");
-  manager_.loadTexture("./textures/block_solid.png",
-                       Dimensions{DimensionsType::Image}, false, "block_solid");
+  manager_.loadTexture("./textures/awesomeface.png", {}, true, "face");
+  manager_.loadTexture("./textures/block.png", {}, false, "block");
+  manager_.loadTexture("./textures/block_solid.png", {}, false, "block_solid");
+  manager_.loadTexture("./textures/paddle.png", {}, true, "paddle");
 
   // Load levels.
   Level<GameObject> level1{blockToDrawable}, level2{blockToDrawable},
@@ -39,10 +38,31 @@ void Game::init() {
   this->levels_.emplace_back(std::move(level4));
   this->level_ = 2;
 
-  this->renderer = std::make_unique<SpriteRenderer>(shader);
+  // Load player.
+  glm::vec2 playerPos{this->width_ / 2 - PLAYER_SIZE.x / 2,
+                      this->height_ - PLAYER_SIZE.y};
+  this->player_ = std::make_unique<GameObject>(playerPos, PLAYER_SIZE,
+                                               manager_.getTexture("paddle"));
+
+  this->renderer_ = std::make_unique<SpriteRenderer>(shader);
 }
 
-void Game::processInput() {}
+void Game::processInput() {
+  if (this->state_ == State::Active) {
+    GLfloat velocity = PLAYER_VELOCITY * this->dt_;
+    if (this->keys_[GLFW_KEY_A]) {
+      if (this->player_->options.position.x >= 0) {
+        this->player_->options.position.x -= velocity;
+      }
+    }
+    if (this->keys_[GLFW_KEY_D]) {
+      if (this->player_->options.position.x <=
+          this->width_ - this->player_->options.size.x) {
+        this->player_->options.position.x += velocity;
+      }
+    }
+  }
+}
 
 void Game::update() {}
 
@@ -50,9 +70,10 @@ void Game::render() {
   if (this->state_ == State::Active) {
     auto &texture = this->manager_.getTexture("face");
     RendererOptions options{{200, 200}, {300, 400}, 45.0f, {0.0f, 1.0f, 0.0f}};
-    this->renderer->drawSprite(texture, options);
+    this->renderer_->drawSprite(texture, options);
 
-    this->levels_[this->level_].draw(*this->renderer);
+    this->player_->draw(*this->renderer_);
+    this->levels_[this->level_].draw(*this->renderer_);
   }
 }
 

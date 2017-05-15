@@ -10,9 +10,9 @@ enum class DimensionsType : bool {
 };
 
 struct Dimensions {
-  Dimensions(DimensionsType type) : type(type), width(0), height(0) {}
-  Dimensions(DimensionsType type, int width, int height)
-      : type(type), width(width), height(height) {}
+  Dimensions() : type(DimensionsType::Image), width(0), height(0) {}
+  Dimensions(int width, int height)
+      : type(DimensionsType::Custom), width(width), height(height) {}
   DimensionsType type;
   int width;
   int height;

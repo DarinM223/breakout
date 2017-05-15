@@ -9,6 +9,9 @@
 #include "ResourceManager.h"
 #include "SpriteRenderer.h"
 
+const glm::vec2 PLAYER_SIZE{100, 20};
+const GLfloat PLAYER_VELOCITY{500.0f};
+
 class Game {
  public:
   enum class State : char {
@@ -37,7 +40,8 @@ class Game {
   GLfloat lastTime_{0.0f};
 
   ResourceManager &manager_;
-  std::unique_ptr<SpriteRenderer> renderer{nullptr};
+  std::unique_ptr<SpriteRenderer> renderer_{nullptr};
+  std::unique_ptr<GameObject> player_{nullptr};
   int width_;
   int height_;
 };
