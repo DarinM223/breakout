@@ -4,7 +4,7 @@ void ResourceManager::loadShader(std::string vertexPath,
                                  std::string fragmentPath,
                                  const std::string& name) {
   Shader shader{std::move(vertexPath), std::move(fragmentPath)};
-  this->shaders_.emplace(name, std::move(shader));
+  shaders_.emplace(name, std::move(shader));
 }
 
 void ResourceManager::loadTexture(std::string path,
@@ -16,13 +16,13 @@ void ResourceManager::loadTexture(std::string path,
     options.imageFormat = GL_RGBA;
   }
   Texture texture{std::move(path), dimensions, options};
-  this->textures_.emplace(name, std::move(texture));
+  textures_.emplace(name, std::move(texture));
 }
 
 Shader& ResourceManager::getShader(const std::string& name) {
-  return this->shaders_.find(name)->second;
+  return shaders_.find(name)->second;
 }
 
 Texture& ResourceManager::getTexture(const std::string& name) {
-  return this->textures_.find(name)->second;
+  return textures_.find(name)->second;
 }

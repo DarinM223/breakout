@@ -61,14 +61,14 @@ class Shader {
     return *this;
   }
 
-  void use() noexcept { glUseProgram(this->program_); }
-  GLuint program() const noexcept { return this->program_; }
+  void use() noexcept { glUseProgram(program_); }
+  GLuint program() const noexcept { return program_; }
   void setMatrix4(const char *name, const glm::mat4 &matrix);
   void setInteger(const char *name, GLint value);
   void setVector3(const char *name, const glm::vec3 &value);
 
  private:
-  void release() { glDeleteProgram(this->program_); }
+  void release() { glDeleteProgram(program_); }
   std::tuple<std::string, std::string> getShaderSrcs(std::string vertexPath,
                                                      std::string fragmentPath);
 

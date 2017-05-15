@@ -48,10 +48,10 @@ class Texture {
     return *this;
   }
 
-  void bind() { glBindTexture(GL_TEXTURE_2D, this->texture_); }
+  void bind() { glBindTexture(GL_TEXTURE_2D, texture_); }
 
  private:
-  void release() { glDeleteTextures(1, &this->texture_); }
+  void release() { glDeleteTextures(1, &texture_); }
   GLuint texture_;
 };
 

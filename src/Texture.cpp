@@ -3,8 +3,8 @@
 
 Texture::Texture(std::string path, const Dimensions& dimensions,
                  const TextureOptions& options) {
-  glGenTextures(1, &this->texture_);
-  glBindTexture(GL_TEXTURE_2D, this->texture_);
+  glGenTextures(1, &texture_);
+  glBindTexture(GL_TEXTURE_2D, texture_);
   {
     Image image{std::move(path)};
     if (image.get() == nullptr) {

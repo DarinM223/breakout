@@ -39,7 +39,7 @@ class SpriteRenderer {
   void drawSprite(Texture& texture, const RendererOptions& options);
 
  private:
-  void release() { glDeleteVertexArrays(1, &this->vao_); }
+  void release() { glDeleteVertexArrays(1, &vao_); }
 
   Shader& shader_;
   GLuint vao_;

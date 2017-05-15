@@ -27,7 +27,7 @@ class Game {
   void render();
   void updateTime(GLfloat time);
 
-  void setKey(int key, bool value) { this->keys_[key] = value; }
+  void setKey(int key, bool value) { keys_[key] = value; }
 
  private:
   std::array<bool, 1024> keys_{};

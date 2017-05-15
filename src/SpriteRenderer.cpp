@@ -7,13 +7,13 @@ SpriteRenderer::SpriteRenderer(Shader& shader) : shader_(shader) {
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
                         1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f};
 
-  glGenVertexArrays(1, &this->vao_);
+  glGenVertexArrays(1, &vao_);
   glGenBuffers(1, &vbo);
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glBindVertexArray(this->vao_);
+  glBindVertexArray(vao_);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
                         (GLvoid*)0);
@@ -23,7 +23,7 @@ SpriteRenderer::SpriteRenderer(Shader& shader) : shader_(shader) {
 
 void SpriteRenderer::drawSprite(Texture& texture,
                                 const RendererOptions& options) {
-  this->shader_.use();
+  shader_.use();
   glm::mat4 model{};
   model = glm::translate(model, glm::vec3{options.position, 0.0f});
 
@@ -35,13 +35,13 @@ void SpriteRenderer::drawSprite(Texture& texture,
 
   model = glm::scale(model, glm::vec3{options.size, 1.0f});
 
-  this->shader_.setMatrix4("model", model);
-  this->shader_.setVector3("spriteColor", options.color);
+  shader_.setMatrix4("model", model);
+  shader_.setVector3("spriteColor", options.color);
 
   glActiveTexture(GL_TEXTURE0);
   texture.bind();
 
-  glBindVertexArray(this->vao_);
+  glBindVertexArray(vao_);
   glDrawArrays(GL_TRIANGLES, 0, 6);
   glBindVertexArray(0);
 }

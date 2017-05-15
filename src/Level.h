@@ -33,7 +33,7 @@ class Level : public IsDerivedFrom<Object, Drawable> {
 template <typename Object>
 void Level<Object>::load(ResourceManager &manager, const char *file,
                          GLuint width, GLuint height) {
-  this->bricks_.clear();
+  bricks_.clear();
   std::vector<std::vector<GLuint>> tileData;
   std::ifstream fstream{file};
   if (!fstream) {
@@ -59,7 +59,7 @@ void Level<Object>::load(ResourceManager &manager, const char *file,
 
 template <typename Object>
 void Level<Object>::draw(SpriteRenderer &renderer) {
-  for (auto &obj : this->bricks_) {
+  for (auto &obj : bricks_) {
     obj.draw(renderer);
   }
 }
@@ -83,7 +83,7 @@ void Level<Object>::init(ResourceManager &manager,
       auto tile = tileData[y][x];
       if (tile > 0) {
         auto obj = toDrawable_(manager, tile, x, y, unitWidth, unitHeight);
-        this->bricks_.emplace_back(std::move(obj));
+        bricks_.emplace_back(std::move(obj));
       }
     }
   }

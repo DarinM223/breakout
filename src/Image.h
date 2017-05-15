@@ -13,14 +13,13 @@ class ImageLoadException : public std::exception {
 class Image {
  public:
   Image(std::string path) {
-    this->data_ = stbi_load(path.c_str(), &this->width_, &this->height_,
-                            &this->nrComponents_, 0);
+    this->data_ = stbi_load(path.c_str(), &width_, &height_, &nrComponents_, 0);
   }
-  ~Image() { stbi_image_free(this->data_); }
-  unsigned char *get() const noexcept { return this->data_; }
-  int width() const noexcept { return this->width_; }
-  int height() const noexcept { return this->height_; }
-  int nrComponents() const noexcept { return this->nrComponents_; }
+  ~Image() { stbi_image_free(data_); }
+  unsigned char *get() const noexcept { return data_; }
+  int width() const noexcept { return width_; }
+  int height() const noexcept { return height_; }
+  int nrComponents() const noexcept { return nrComponents_; }
 
  private:
   unsigned char *data_;
