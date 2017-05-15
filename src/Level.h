@@ -22,6 +22,7 @@ class Level : public IsDerivedFrom<Object, Drawable> {
             GLuint height);
   void draw(SpriteRenderer &renderer);
   bool completed();
+  std::vector<Object> &blocks() { return bricks_; }
 
  private:
   BlockToDrawable<Object> toDrawable_;

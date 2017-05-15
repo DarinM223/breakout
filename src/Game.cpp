@@ -77,7 +77,22 @@ void Game::processInput() {
   }
 }
 
-void Game::update() { ball_->move(dt_, width_); }
+void Game::update() {
+  ball_->move(dt_, width_);
+  this->handleCollisions();
+}
+
+void Game::handleCollisions() {
+  for (auto &tile : levels_[level_].blocks()) {
+    if (!tile.destroyed) {
+      if (checkCollision(*ball_, tile)) {
+        if (!tile.isSolid) {
+          tile.destroyed = true;
+        }
+      }
+    }
+  }
+}
 
 void Game::render() {
   if (state_ == State::Active) {

@@ -15,4 +15,6 @@ struct BallObject : public GameObject {
   void reset(glm::vec2 position, glm::vec2 velocity);
 };
 
+bool checkCollision(const BallObject& a, const GameObject& b);
+
 #endif

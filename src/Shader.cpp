@@ -24,23 +24,23 @@ class ScopedShader {
     return *this;
   }
 
-  GLuint get() const noexcept { return this->shader_; }
+  GLuint get() const noexcept { return shader_; }
 
  private:
-  void release() { glDeleteShader(this->shader_); }
+  void release() { glDeleteShader(shader_); }
   GLuint shader_;
 };
 
 const char* ShaderLoadException::what() const noexcept {
   std::ostringstream out;
-  out << "Could not load vertex shader file: " << this->vertexPath_
-      << " and fragment shader file: " << this->fragmentPath_;
+  out << "Could not load vertex shader file: " << vertexPath_
+      << " and fragment shader file: " << fragmentPath_;
   return out.str().c_str();
 }
 
 const char* ShaderCompileException::what() const noexcept {
   std::string shaderTypeStr;
-  switch (this->type_) {
+  switch (type_) {
     case ShaderCompileException::Type::Vertex:
       shaderTypeStr = "vertex";
       break;
@@ -49,7 +49,7 @@ const char* ShaderCompileException::what() const noexcept {
       break;
   }
   std::ostringstream out;
-  out << "Could not compile " << shaderTypeStr << " shader: " << this->log_;
+  out << "Could not compile " << shaderTypeStr << " shader: " << log_;
   return out.str().c_str();
 }
 
@@ -111,29 +111,29 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath) {
                                  std::move(log)};
   }
 
-  this->program_ = glCreateProgram();
-  glAttachShader(this->program_, vertexShader.get());
-  glAttachShader(this->program_, fragmentShader.get());
-  glLinkProgram(this->program_);
-  glGetProgramiv(this->program_, GL_LINK_STATUS, &success);
+  program_ = glCreateProgram();
+  glAttachShader(program_, vertexShader.get());
+  glAttachShader(program_, fragmentShader.get());
+  glLinkProgram(program_);
+  glGetProgramiv(program_, GL_LINK_STATUS, &success);
   if (!success) {
-    glGetProgramInfoLog(this->program_, 512, NULL, infoLog);
+    glGetProgramInfoLog(program_, 512, NULL, infoLog);
     std::string log{infoLog};
     throw ProgramLinkException{std::move(log)};
   }
 }
 
 void Shader::setMatrix4(const char* name, const glm::mat4& matrix) {
-  auto location = glGetUniformLocation(this->program_, name);
+  auto location = glGetUniformLocation(program_, name);
   glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void Shader::setInteger(const char* name, GLint value) {
-  auto location = glGetUniformLocation(this->program_, name);
+  auto location = glGetUniformLocation(program_, name);
   glUniform1i(location, value);
 }
 
 void Shader::setVector3(const char* name, const glm::vec3& value) {
-  auto location = glGetUniformLocation(this->program_, name);
+  auto location = glGetUniformLocation(program_, name);
   glUniform3f(location, value.x, value.y, value.z);
 }

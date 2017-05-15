@@ -1,7 +1,7 @@
 #include "Object.h"
 #include <stdexcept>
 
-GameObject blockToDrawable(ResourceManager& manager, GLuint tile, GLuint x,
+GameObject blockToDrawable(ResourceManager &manager, GLuint tile, GLuint x,
                            GLuint y, GLfloat unitWidth, GLfloat unitHeight) {
   glm::vec2 pos{unitWidth * x, unitHeight * y};
   glm::vec2 size{unitWidth, unitHeight};
@@ -30,4 +30,16 @@ GameObject blockToDrawable(ResourceManager& manager, GLuint tile, GLuint x,
   }
 
   throw std::runtime_error{"Invalid tile"};
+}
+
+bool checkCollision(const GameObject &a, const GameObject &b) {
+  bool collisionX =
+      a.options.position.x + a.options.size.x >= b.options.position.x &&
+      b.options.position.x + b.options.size.x >= a.options.position.x;
+
+  bool collisionY =
+      a.options.position.y + a.options.size.y >= b.options.position.y &&
+      b.options.position.y + b.options.size.y >= a.options.position.y;
+
+  return collisionX && collisionY;
 }

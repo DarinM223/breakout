@@ -28,6 +28,7 @@ class Game {
   void init();
   void processInput();
   void update();
+  void handleCollisions();
   void render();
   void updateTime(GLfloat time);
 
