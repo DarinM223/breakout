@@ -43,6 +43,12 @@ void Game::init() {
   player_ = std::make_unique<GameObject>(playerPos, PLAYER_SIZE,
                                          manager_.getTexture("paddle"));
 
+  // Load ball.
+  glm::vec2 ballPos{
+      playerPos + glm::vec2{PLAYER_SIZE.x / 2 - BALL_RADIUS, -BALL_RADIUS * 2}};
+  ball_ = std::make_unique<BallObject>(ballPos, BALL_RADIUS, BALL_VELOCITY,
+                                       manager_.getTexture("face"));
+
   renderer_ = std::make_unique<SpriteRenderer>(shader);
 }
 
@@ -52,17 +58,26 @@ void Game::processInput() {
     if (keys_[GLFW_KEY_A]) {
       if (player_->options.position.x >= 0) {
         player_->options.position.x -= velocity;
+        if (ball_->stuck) {
+          ball_->options.position.x -= velocity;
+        }
       }
     }
     if (keys_[GLFW_KEY_D]) {
       if (player_->options.position.x <= width_ - player_->options.size.x) {
         player_->options.position.x += velocity;
+        if (ball_->stuck) {
+          ball_->options.position.x += velocity;
+        }
       }
+    }
+    if (keys_[GLFW_KEY_SPACE]) {
+      ball_->stuck = false;
     }
   }
 }
 
-void Game::update() {}
+void Game::update() { ball_->move(dt_, width_); }
 
 void Game::render() {
   if (state_ == State::Active) {
@@ -72,6 +87,7 @@ void Game::render() {
     renderer_->drawSprite(texture, options);
 
     player_->draw(*renderer_);
+    ball_->draw(*renderer_);
     levels_[level_].draw(*renderer_);
   }
 }
