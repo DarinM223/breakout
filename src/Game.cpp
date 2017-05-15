@@ -17,8 +17,28 @@ void Game::init() {
   shader.setInteger("image", 0);
   shader.setMatrix4("projection", projection);
 
-  this->manager_.loadTexture("./textures/awesomeface.png",
-                             Dimensions{DimensionsType::Image}, true, "face");
+  // Load textures.
+  manager_.loadTexture("./textures/awesomeface.png",
+                       Dimensions{DimensionsType::Image}, true, "face");
+  manager_.loadTexture("./textures/block.png",
+                       Dimensions{DimensionsType::Image}, false, "block");
+  manager_.loadTexture("./textures/block_solid.png",
+                       Dimensions{DimensionsType::Image}, false, "block_solid");
+
+  // Load levels.
+  Level<GameObject> level1{blockToDrawable}, level2{blockToDrawable},
+      level3{blockToDrawable}, level4{blockToDrawable};
+  level1.load(manager_, "./levels/one.lvl", width_, height_ * 0.5);
+  level2.load(manager_, "./levels/two.lvl", width_, height_ * 0.5);
+  level3.load(manager_, "./levels/three.lvl", width_, height_ * 0.5);
+  level4.load(manager_, "./levels/four.lvl", width_, height_ * 0.5);
+
+  this->levels_.emplace_back(std::move(level1));
+  this->levels_.emplace_back(std::move(level2));
+  this->levels_.emplace_back(std::move(level3));
+  this->levels_.emplace_back(std::move(level4));
+  this->level_ = 2;
+
   this->renderer = std::make_unique<SpriteRenderer>(shader);
 }
 
@@ -27,9 +47,13 @@ void Game::processInput() {}
 void Game::update() {}
 
 void Game::render() {
-  auto &texture = this->manager_.getTexture("face");
-  RendererOptions options{{200, 200}, {300, 400}, 45.0f, {0.0f, 1.0f, 0.0f}};
-  this->renderer->drawSprite(texture, options);
+  if (this->state_ == State::Active) {
+    auto &texture = this->manager_.getTexture("face");
+    RendererOptions options{{200, 200}, {300, 400}, 45.0f, {0.0f, 1.0f, 0.0f}};
+    this->renderer->drawSprite(texture, options);
+
+    this->levels_[this->level_].draw(*this->renderer);
+  }
 }
 
 void Game::updateTime(GLfloat time) {

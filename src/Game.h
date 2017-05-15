@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <array>
 #include <memory>
+#include "Level.h"
+#include "Object.h"
 #include "ResourceManager.h"
 #include "SpriteRenderer.h"
 
@@ -27,8 +29,13 @@ class Game {
  private:
   std::array<bool, 1024> keys_{};
   State state_{State::Active};
+
+  std::vector<Level<GameObject>> levels_;
+  GLuint level_;
+
   GLfloat dt_{0.0f};
   GLfloat lastTime_{0.0f};
+
   ResourceManager &manager_;
   std::unique_ptr<SpriteRenderer> renderer{nullptr};
   int width_;
