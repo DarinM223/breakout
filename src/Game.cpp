@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <GLFW/glfw3.h>
+#include "Collision.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -85,11 +86,50 @@ void Game::update() {
 void Game::handleCollisions() {
   for (auto &tile : levels_[level_].blocks()) {
     if (!tile.destroyed) {
-      if (checkCollision(*ball_, tile)) {
+      auto collision = checkCollision(*ball_, tile);
+      if (collision.occurred) {
         if (!tile.isSolid) {
           tile.destroyed = true;
         }
+
+        // Resolve collision.
+        if (collision.direction == Direction::Left ||
+            collision.direction == Direction::Right) {
+          ball_->velocity.x = -ball_->velocity.x;
+          GLfloat depth = ball_->radius - std::abs(collision.difference.x);
+          if (collision.direction == Direction::Left) {
+            ball_->options.position.x += depth;
+          } else {
+            ball_->options.position.x -= depth;
+          }
+        } else {
+          ball_->velocity.y = -ball_->velocity.y;
+          GLfloat depth = ball_->radius - std::abs(collision.difference.y);
+          if (collision.direction == Direction::Up) {
+            ball_->options.position.y -= depth;
+          } else {
+            ball_->options.position.y += depth;
+          }
+        }
       }
+    }
+  }
+
+  if (!ball_->stuck) {
+    Collision result = checkCollision(*ball_, *player_);
+    if (result.occurred) {
+      GLfloat centerBoard =
+          player_->options.position.x + player_->options.size.x / 2;
+      GLfloat distance =
+          (ball_->options.position.x + ball_->radius) - centerBoard;
+      GLfloat percentage = distance / (player_->options.size.x / 2);
+      GLfloat strength = 2.0f;
+      glm::vec2 oldVelocity = ball_->velocity;
+      ball_->velocity.x = BALL_VELOCITY.x * percentage * strength;
+      ball_->velocity.y = -ball_->velocity.y;
+      ball_->velocity =
+          glm::normalize(ball_->velocity) * glm::length(oldVelocity);
+      ball_->velocity.y = -1 * std::abs(ball_->velocity.y);
     }
   }
 }

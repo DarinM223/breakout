@@ -32,16 +32,3 @@ void BallObject::reset(glm::vec2 position, glm::vec2 velocity) {
   this->velocity = velocity;
   this->stuck = true;
 }
-
-bool checkCollision(const BallObject& a, const GameObject& b) {
-  glm::vec2 center{a.options.position + a.options.size};
-  glm::vec2 aabbHalfExtents{b.options.size.x / 2, b.options.size.y / 2};
-  glm::vec2 aabbCenter{b.options.position.x + aabbHalfExtents.x,
-                       b.options.position.y + aabbHalfExtents.y};
-  glm::vec2 difference = center - aabbCenter;
-  glm::vec2 clamped = glm::clamp(difference, -aabbHalfExtents, aabbHalfExtents);
-  glm::vec2 closest = aabbCenter + clamped;
-
-  difference = closest - center;
-  return glm::length(difference) < a.radius;
-}

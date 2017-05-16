@@ -59,6 +59,4 @@ struct GameObject : public Drawable {
 GameObject blockToDrawable(ResourceManager& manager, GLuint tile, GLuint x,
                            GLuint y, GLfloat unitWidth, GLfloat unitHeight);
 
-bool checkCollision(const GameObject& a, const GameObject& b);
-
 #endif

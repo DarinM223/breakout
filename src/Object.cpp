@@ -31,15 +31,3 @@ GameObject blockToDrawable(ResourceManager &manager, GLuint tile, GLuint x,
 
   throw std::runtime_error{"Invalid tile"};
 }
-
-bool checkCollision(const GameObject &a, const GameObject &b) {
-  bool collisionX =
-      a.options.position.x + a.options.size.x >= b.options.position.x &&
-      b.options.position.x + b.options.size.x >= a.options.position.x;
-
-  bool collisionY =
-      a.options.position.y + a.options.size.y >= b.options.position.y &&
-      b.options.position.y + b.options.size.y >= a.options.position.y;
-
-  return collisionX && collisionY;
-}
