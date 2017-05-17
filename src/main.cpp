@@ -1,6 +1,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <ctime>
 #include "Game.h"
 #include "Level.h"
 
@@ -10,6 +11,7 @@ const GLuint SCREEN_HEIGHT = 600;
 void keyCallback(GLFWwindow *, int, int, int, int);
 
 int main() {
+  std::srand(std::time(0));
   ResourceManager manager{};
   Game breakout{SCREEN_WIDTH, SCREEN_HEIGHT, manager};
 

@@ -13,7 +13,7 @@ class ImageLoadException : public std::exception {
 class Image {
  public:
   Image(std::string path) {
-    this->data_ = stbi_load(path.c_str(), &width_, &height_, &nrComponents_, 0);
+    data_ = stbi_load(path.c_str(), &width_, &height_, &nrComponents_, 0);
   }
   ~Image() { stbi_image_free(data_); }
   unsigned char *get() const noexcept { return data_; }

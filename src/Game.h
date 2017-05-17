@@ -7,6 +7,7 @@
 #include "BallObject.h"
 #include "Level.h"
 #include "Object.h"
+#include "Particle.h"
 #include "ResourceManager.h"
 #include "SpriteRenderer.h"
 
@@ -46,6 +47,7 @@ class Game {
 
   ResourceManager &manager_;
   std::unique_ptr<SpriteRenderer> renderer_{nullptr};
+  std::unique_ptr<ParticleGenerator> generator_{nullptr};
   std::unique_ptr<GameObject> player_{nullptr};
   std::unique_ptr<BallObject> ball_{nullptr};
   int width_;

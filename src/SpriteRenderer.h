@@ -25,13 +25,13 @@ class SpriteRenderer {
   SpriteRenderer& operator=(const SpriteRenderer&) = delete;
 
   SpriteRenderer(SpriteRenderer&& other) : shader_(other.shader_) {
-    this->vao_ = other.vao_;
+    vao_ = other.vao_;
     other.vao_ = -1;
   }
   SpriteRenderer& operator=(SpriteRenderer&& other) {
     this->release();
-    this->shader_ = std::move(other.shader_);
-    this->vao_ = other.vao_;
+    shader_ = std::move(other.shader_);
+    vao_ = other.vao_;
     other.vao_ = -1;
     return *this;
   }

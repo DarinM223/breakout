@@ -14,12 +14,12 @@ class ScopedShader {
   ScopedShader& operator=(const ScopedShader&) = delete;
 
   ScopedShader(ScopedShader&& other) {
-    this->shader_ = other.shader_;
+    shader_ = other.shader_;
     other.shader_ = -1;
   }
   ScopedShader& operator=(ScopedShader&& other) {
     this->release();
-    this->shader_ = other.shader_;
+    shader_ = other.shader_;
     other.shader_ = -1;
     return *this;
   }
@@ -133,7 +133,17 @@ void Shader::setInteger(const char* name, GLint value) {
   glUniform1i(location, value);
 }
 
+void Shader::setVector2(const char* name, const glm::vec2& value) {
+  auto location = glGetUniformLocation(program_, name);
+  glUniform2f(location, value.x, value.y);
+}
+
 void Shader::setVector3(const char* name, const glm::vec3& value) {
   auto location = glGetUniformLocation(program_, name);
   glUniform3f(location, value.x, value.y, value.z);
+}
+
+void Shader::setVector4(const char* name, const glm::vec4& value) {
+  auto location = glGetUniformLocation(program_, name);
+  glUniform4f(location, value.x, value.y, value.z, value.a);
 }

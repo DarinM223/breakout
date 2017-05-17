@@ -38,12 +38,12 @@ class Texture {
   Texture &operator=(const Texture &) = delete;
 
   Texture(Texture &&other) {
-    this->texture_ = other.texture_;
+    texture_ = other.texture_;
     other.texture_ = -1;
   }
   Texture &operator=(Texture &&other) {
     this->release();
-    this->texture_ = other.texture_;
+    texture_ = other.texture_;
     other.texture_ = -1;
     return *this;
   }

@@ -21,7 +21,7 @@ class Level : public IsDerivedFrom<Object, Drawable> {
   void load(ResourceManager &manager, const char *file, GLuint width,
             GLuint height);
   void draw(SpriteRenderer &renderer);
-  bool completed();
+  bool completed() const;
   std::vector<Object> &blocks() { return bricks_; }
 
  private:
@@ -66,7 +66,7 @@ void Level<Object>::draw(SpriteRenderer &renderer) {
 }
 
 template <typename Object>
-bool Level<Object>::completed() {
+bool Level<Object>::completed() const {
   return true;  // TODO(DarinM223): implement this.
 }
 

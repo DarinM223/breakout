@@ -8,6 +8,8 @@ Game::Game(int width, int height, ResourceManager &manager)
     : manager_(manager), width_(width), height_(height) {}
 
 void Game::init() {
+  manager_.loadShader("./shaders/particle.vs", "./shaders/particle.frag",
+                      "particle");
   manager_.loadShader("./shaders/sprite.vs", "./shaders/sprite.frag", "sprite");
   auto width = static_cast<GLfloat>(width_);
   auto height = static_cast<GLfloat>(height_);
@@ -24,6 +26,7 @@ void Game::init() {
   manager_.loadTexture("./textures/block.png", {}, false, "block");
   manager_.loadTexture("./textures/block_solid.png", {}, false, "block_solid");
   manager_.loadTexture("./textures/paddle.png", {}, true, "paddle");
+  manager_.loadTexture("./textures/particle.png", {}, true, "particle");
 
   // Load levels.
   Level<GameObject> level1{blockToDrawable}, level2{blockToDrawable},
@@ -49,6 +52,10 @@ void Game::init() {
       playerPos + glm::vec2{PLAYER_SIZE.x / 2 - BALL_RADIUS, -BALL_RADIUS * 2}};
   ball_ = std::make_unique<BallObject>(ballPos, BALL_RADIUS, BALL_VELOCITY,
                                        manager_.getTexture("face"));
+
+  // Load particle generator.
+  generator_ = std::make_unique<ParticleGenerator>(
+      manager_.getShader("particle"), manager_.getTexture("particle"), 500);
 
   renderer_ = std::make_unique<SpriteRenderer>(shader);
 }
@@ -81,6 +88,7 @@ void Game::processInput() {
 void Game::update() {
   ball_->move(dt_, width_);
   this->handleCollisions();
+  generator_->update(dt_, *ball_, 2, glm::vec2{ball_->radius / 2});
 }
 
 void Game::handleCollisions() {
@@ -142,6 +150,7 @@ void Game::render() {
     renderer_->drawSprite(texture, options);
 
     player_->draw(*renderer_);
+    generator_->draw();
     ball_->draw(*renderer_);
     levels_[level_].draw(*renderer_);
   }
