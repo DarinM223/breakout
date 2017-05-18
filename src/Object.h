@@ -10,21 +10,14 @@ template <typename D, typename B>
 class IsDerivedFrom {
   static void Constraints(D* p) {
     B* pb = p;
-    pb = p;
     (void)pb;
   }
 
  protected:
   IsDerivedFrom() {
     void (*p)(D*) = Constraints;
-    p = Constraints;
     (void)p;
   }
-};
-
-template <typename D>
-class IsDerivedFrom<D, void> {
-  IsDerivedFrom() { char* p = (int*)0; }
 };
 
 struct Drawable {

@@ -15,10 +15,15 @@ void Game::init() {
   auto height = static_cast<GLfloat>(height_);
   auto projection = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
 
-  auto &shader = manager_.getShader("sprite");
-  shader.use();
-  shader.setInteger("image", 0);
-  shader.setMatrix4("projection", projection);
+  auto &spriteShader = manager_.getShader("sprite");
+  spriteShader.use();
+  spriteShader.setInteger("image", 0);
+  spriteShader.setMatrix4("projection", projection);
+
+  auto &particleShader = manager_.getShader("particle");
+  particleShader.use();
+  particleShader.setInteger("sprite", 0);
+  particleShader.setMatrix4("projection", projection);
 
   // Load textures.
   manager_.loadTexture("./textures/awesomeface.png", {}, true, "face");
@@ -55,9 +60,9 @@ void Game::init() {
 
   // Load particle generator.
   generator_ = std::make_unique<ParticleGenerator>(
-      manager_.getShader("particle"), manager_.getTexture("particle"), 500);
+      particleShader, manager_.getTexture("particle"), 500);
 
-  renderer_ = std::make_unique<SpriteRenderer>(shader);
+  renderer_ = std::make_unique<SpriteRenderer>(spriteShader);
 }
 
 void Game::processInput() {

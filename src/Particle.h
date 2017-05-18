@@ -35,6 +35,7 @@ class ParticleGenerator {
   }
 
   ParticleGenerator& operator=(ParticleGenerator&& other) {
+    this->release();
     shader_ = std::move(other.shader_);
     texture_ = std::move(other.texture_);
     particles_ = std::move(other.particles_);
