@@ -15,20 +15,26 @@ class ScopedShader {
 
   ScopedShader(ScopedShader&& other) {
     shader_ = other.shader_;
-    other.shader_ = -1;
+    other.valid_ = false;
   }
   ScopedShader& operator=(ScopedShader&& other) {
     this->release();
     shader_ = other.shader_;
-    other.shader_ = -1;
+    other.valid_ = false;
     return *this;
   }
 
   GLuint get() const noexcept { return shader_; }
 
  private:
-  void release() { glDeleteShader(shader_); }
+  void release() {
+    if (valid_) {
+      glDeleteShader(shader_);
+    }
+  }
+
   GLuint shader_;
+  bool valid_{true};
 };
 
 const char* ShaderLoadException::what() const noexcept {
@@ -145,5 +151,5 @@ void Shader::setVector3(const char* name, const glm::vec3& value) {
 
 void Shader::setVector4(const char* name, const glm::vec4& value) {
   auto location = glGetUniformLocation(program_, name);
-  glUniform4f(location, value.x, value.y, value.z, value.a);
+  glUniform4f(location, value.x, value.y, value.z, value.w);
 }

@@ -20,6 +20,7 @@ struct Particle {
 class ParticleGenerator {
  public:
   ParticleGenerator(Shader& shader, Texture& texture, GLuint amount);
+  ~ParticleGenerator() { this->release(); }
 
   ParticleGenerator() = delete;
   ParticleGenerator(const ParticleGenerator&) = delete;
@@ -30,7 +31,7 @@ class ParticleGenerator {
     particles_ = std::move(other.particles_);
     amount_ = other.amount_;
     vao_ = other.vao_;
-    other.vao_ = -1;
+    other.valid_ = false;
   }
 
   ParticleGenerator& operator=(ParticleGenerator&& other) {
@@ -39,7 +40,7 @@ class ParticleGenerator {
     particles_ = std::move(other.particles_);
     amount_ = other.amount_;
     vao_ = other.vao_;
-    other.vao_ = -1;
+    other.valid_ = false;
     return *this;
   }
 
@@ -49,6 +50,12 @@ class ParticleGenerator {
   void draw();
 
  private:
+  void release() {
+    if (valid_) {
+      glDeleteVertexArrays(1, &vao_);
+    }
+  }
+
   GLuint firstUnusedParticle();
   void respawnParticle(Particle& particle, GameObject& object,
                        glm::vec2 offset);
@@ -60,6 +67,7 @@ class ParticleGenerator {
   GLuint lastUsedParticle_;
 
   GLuint vao_;
+  bool valid_{true};
 };
 
 #endif

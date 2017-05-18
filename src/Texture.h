@@ -40,19 +40,25 @@ class Texture {
   Texture(Texture &&other) {
     texture_ = other.texture_;
     other.texture_ = -1;
+    other.valid_ = false;
   }
   Texture &operator=(Texture &&other) {
     this->release();
     texture_ = other.texture_;
-    other.texture_ = -1;
+    other.valid_ = false;
     return *this;
   }
 
   void bind() { glBindTexture(GL_TEXTURE_2D, texture_); }
 
  private:
-  void release() { glDeleteTextures(1, &texture_); }
+  void release() {
+    if (valid_) {
+      glDeleteTextures(1, &texture_);
+    }
+  }
   GLuint texture_;
+  bool valid_{true};
 };
 
 #endif

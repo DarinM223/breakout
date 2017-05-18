@@ -52,12 +52,12 @@ class Shader {
 
   Shader(Shader &&other) {
     program_ = other.program_;
-    other.program_ = -1;
+    other.valid_ = false;
   }
   Shader &operator=(Shader &&other) {
     this->release();
     program_ = other.program_;
-    other.program_ = -1;
+    other.valid_ = false;
     return *this;
   }
 
@@ -70,11 +70,17 @@ class Shader {
   void setVector4(const char *name, const glm::vec4 &value);
 
  private:
-  void release() { glDeleteProgram(program_); }
+  void release() {
+    if (valid_) {
+      glDeleteProgram(program_);
+    }
+  }
+
   std::tuple<std::string, std::string> getShaderSrcs(std::string vertexPath,
                                                      std::string fragmentPath);
 
   GLuint program_;
+  bool valid_{true};
 };
 
 #endif

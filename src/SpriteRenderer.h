@@ -26,23 +26,28 @@ class SpriteRenderer {
 
   SpriteRenderer(SpriteRenderer&& other) : shader_(other.shader_) {
     vao_ = other.vao_;
-    other.vao_ = -1;
+    other.valid_ = false;
   }
   SpriteRenderer& operator=(SpriteRenderer&& other) {
     this->release();
     shader_ = std::move(other.shader_);
     vao_ = other.vao_;
-    other.vao_ = -1;
+    other.valid_ = false;
     return *this;
   }
 
   void drawSprite(Texture& texture, const RendererOptions& options);
 
  private:
-  void release() { glDeleteVertexArrays(1, &vao_); }
+  void release() {
+    if (valid_) {
+      glDeleteVertexArrays(1, &vao_);
+    }
+  }
 
   Shader& shader_;
   GLuint vao_;
+  bool valid_{true};
 };
 
 #endif
