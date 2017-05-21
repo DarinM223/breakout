@@ -65,6 +65,7 @@ class Shader {
   GLuint program() const noexcept { return program_; }
   void setMatrix4(const char *name, const glm::mat4 &matrix);
   void setInteger(const char *name, GLint value);
+  void setFloat(const char *name, GLfloat value);
   void setVector2(const char *name, const glm::vec2 &value);
   void setVector3(const char *name, const glm::vec3 &value);
   void setVector4(const char *name, const glm::vec4 &value);

@@ -11,6 +11,8 @@ void Game::init() {
   manager_.loadShader("./shaders/particle.vs", "./shaders/particle.frag",
                       "particle");
   manager_.loadShader("./shaders/sprite.vs", "./shaders/sprite.frag", "sprite");
+  manager_.loadShader("./shaders/postprocessor.vs",
+                      "./shaders/postprocessor.frag", "postprocessor");
   auto width = static_cast<GLfloat>(width_);
   auto height = static_cast<GLfloat>(height_);
   auto projection = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
@@ -63,6 +65,8 @@ void Game::init() {
       particleShader, manager_.getTexture("particle"), 500);
 
   renderer_ = std::make_unique<SpriteRenderer>(spriteShader);
+  effects_ = std::make_unique<PostProcessor>(
+      manager_.getShader("postprocessor"), width_, height_);
 }
 
 void Game::processInput() {
@@ -94,6 +98,12 @@ void Game::update() {
   ball_->move(dt_, width_);
   this->handleCollisions();
   generator_->update(dt_, *ball_, 2, glm::vec2{ball_->radius / 2});
+  if (shakeTime_ > 0.0f) {
+    shakeTime_ -= dt_;
+    if (shakeTime_ <= 0.0f) {
+      effects_->shake = false;
+    }
+  }
 }
 
 void Game::handleCollisions() {
@@ -103,6 +113,9 @@ void Game::handleCollisions() {
       if (collision.occurred) {
         if (!tile.isSolid) {
           tile.destroyed = true;
+        } else {
+          shakeTime_ = 0.05f;
+          effects_->shake = true;
         }
 
         // Resolve collision.
@@ -149,15 +162,19 @@ void Game::handleCollisions() {
 
 void Game::render() {
   if (state_ == State::Active) {
-    auto &texture = manager_.getTexture("background");
-    RendererOptions options{
-        {0, 0}, {width_, height_}, 0.0f, {1.0f, 1.0f, 1.0f}};
-    renderer_->drawSprite(texture, options);
+    {
+      auto scopedRender = effects_->prepareRender();
+      auto &texture = manager_.getTexture("background");
+      RendererOptions options{
+          {0, 0}, {width_, height_}, 0.0f, {1.0f, 1.0f, 1.0f}};
+      renderer_->drawSprite(texture, options);
 
-    player_->draw(*renderer_);
-    generator_->draw();
-    ball_->draw(*renderer_);
-    levels_[level_].draw(*renderer_);
+      player_->draw(*renderer_);
+      generator_->draw();
+      ball_->draw(*renderer_);
+      levels_[level_].draw(*renderer_);
+    }
+    effects_->render(glfwGetTime());
   }
 }
 

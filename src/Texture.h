@@ -31,6 +31,8 @@ class Texture {
  public:
   Texture(std::string path, const Dimensions &dimensions,
           const TextureOptions &options);
+  Texture(unsigned char *data, const Dimensions &dimensions,
+          const TextureOptions &options);
   ~Texture() { this->release(); }
 
   Texture() = delete;
@@ -50,6 +52,7 @@ class Texture {
   }
 
   void bind() { glBindTexture(GL_TEXTURE_2D, texture_); }
+  GLuint id() const noexcept { return texture_; }
 
  private:
   void release() {

@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include <fstream>
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include "glm/gtc/type_ptr.hpp"
@@ -102,6 +103,7 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath) {
   if (!success) {
     glGetShaderInfoLog(vertexShader.get(), 512, NULL, infoLog);
     std::string log{infoLog};
+    std::cout << "Vertex Log: " << log << "\n";
     throw ShaderCompileException{ShaderCompileException::Type::Vertex,
                                  std::move(log)};
   }
@@ -113,6 +115,7 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath) {
   if (!success) {
     glGetShaderInfoLog(fragmentShader.get(), 512, NULL, infoLog);
     std::string log{infoLog};
+    std::cout << "Fragment Log: " << log << "\n";
     throw ShaderCompileException{ShaderCompileException::Type::Fragment,
                                  std::move(log)};
   }
@@ -137,6 +140,11 @@ void Shader::setMatrix4(const char* name, const glm::mat4& matrix) {
 void Shader::setInteger(const char* name, GLint value) {
   auto location = glGetUniformLocation(program_, name);
   glUniform1i(location, value);
+}
+
+void Shader::setFloat(const char* name, GLfloat value) {
+  auto location = glGetUniformLocation(program_, name);
+  glUniform1f(location, value);
 }
 
 void Shader::setVector2(const char* name, const glm::vec2& value) {
