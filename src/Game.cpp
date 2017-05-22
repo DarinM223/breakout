@@ -1,8 +1,24 @@
 #include "Game.h"
 #include <GLFW/glfw3.h>
+#include <algorithm>
 #include "Collision.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+
+bool shouldSpawn(GLuint chance) {
+  GLuint random = std::rand() % chance;
+  return random == 0;
+}
+
+bool isOtherPowerupActive(const std::vector<Powerup> &powerups,
+                          Powerup::Type type) {
+  for (const auto &powerup : powerups) {
+    if (powerup.activated && powerup.type == type) {
+      return true;
+    }
+  }
+  return false;
+}
 
 Game::Game(int width, int height, ResourceManager &manager)
     : manager_(manager), width_(width), height_(height) {}
@@ -34,6 +50,18 @@ void Game::init() {
   manager_.loadTexture("./textures/block_solid.png", {}, false, "block_solid");
   manager_.loadTexture("./textures/paddle.png", {}, true, "paddle");
   manager_.loadTexture("./textures/particle.png", {}, true, "particle");
+  manager_.loadTexture("./textures/powerup_chaos.png", {}, true,
+                       "powerup_chaos");
+  manager_.loadTexture("./textures/powerup_confuse.png", {}, true,
+                       "powerup_confuse");
+  manager_.loadTexture("./textures/powerup_increase.png", {}, true,
+                       "powerup_increase");
+  manager_.loadTexture("./textures/powerup_passthrough.png", {}, true,
+                       "powerup_passthrough");
+  manager_.loadTexture("./textures/powerup_speed.png", {}, true,
+                       "powerup_speed");
+  manager_.loadTexture("./textures/powerup_sticky.png", {}, true,
+                       "powerup_sticky");
 
   // Load levels.
   Level<GameObject> level1{blockToDrawable}, level2{blockToDrawable},
@@ -47,7 +75,7 @@ void Game::init() {
   levels_.emplace_back(std::move(level2));
   levels_.emplace_back(std::move(level3));
   levels_.emplace_back(std::move(level4));
-  level_ = 2;
+  level_ = 0;
 
   // Load player.
   glm::vec2 playerPos{width_ / 2 - PLAYER_SIZE.x / 2, height_ - PLAYER_SIZE.y};
@@ -98,6 +126,7 @@ void Game::update() {
   ball_->move(dt_, width_);
   this->handleCollisions();
   generator_->update(dt_, *ball_, 2, glm::vec2{ball_->radius / 2});
+  this->updatePowerups(dt_);
   if (shakeTime_ > 0.0f) {
     shakeTime_ -= dt_;
     if (shakeTime_ <= 0.0f) {
@@ -113,6 +142,7 @@ void Game::handleCollisions() {
       if (collision.occurred) {
         if (!tile.isSolid) {
           tile.destroyed = true;
+          this->spawnPowerups(tile);
         } else {
           shakeTime_ = 0.05f;
           effects_->shake = true;
@@ -137,6 +167,19 @@ void Game::handleCollisions() {
             ball_->options.position.y += depth;
           }
         }
+      }
+    }
+  }
+
+  for (auto &powerup : powerups_) {
+    if (!powerup.destroyed) {
+      if (powerup.options.position.y >= height_) {
+        powerup.destroyed = true;
+      }
+      if (checkCollision(*player_, powerup)) {
+        this->activatePowerup(powerup);
+        powerup.destroyed = true;
+        powerup.activated = true;
       }
     }
   }
@@ -170,6 +213,11 @@ void Game::render() {
       renderer_->drawSprite(texture, options);
 
       player_->draw(*renderer_);
+      for (auto &powerup : powerups_) {
+        if (!powerup.destroyed) {
+          powerup.draw(*renderer_);
+        }
+      }
       generator_->draw();
       ball_->draw(*renderer_);
       levels_[level_].draw(*renderer_);
@@ -181,4 +229,105 @@ void Game::render() {
 void Game::updateTime(GLfloat time) {
   dt_ = time - lastTime_;
   lastTime_ = time;
+}
+
+void Game::spawnPowerups(const GameObject &block) {
+  if (shouldSpawn(75)) {
+    powerups_.emplace_back(Powerup::Type::Speed, glm::vec3{0.5f, 0.5f, 1.0f},
+                           0.0f, block.options.position,
+                           manager_.getTexture("powerup_speed"));
+  }
+  if (shouldSpawn(75)) {
+    powerups_.emplace_back(Powerup::Type::Sticky, glm::vec3{1.0f, 0.5f, 1.0f},
+                           20.0f, block.options.position,
+                           manager_.getTexture("powerup_sticky"));
+  }
+  if (shouldSpawn(75)) {
+    powerups_.emplace_back(
+        Powerup::Type::PassThrough, glm::vec3{0.5f, 1.0f, 0.5f}, 10.0f,
+        block.options.position, manager_.getTexture("powerup_passthrough"));
+  }
+  if (shouldSpawn(75)) {
+    powerups_.emplace_back(
+        Powerup::Type::PadSizeIncrease, glm::vec3{1.0f, 0.6f, 0.4f}, 0.0f,
+        block.options.position, manager_.getTexture("powerup_increase"));
+  }
+  if (shouldSpawn(15)) {
+    powerups_.emplace_back(Powerup::Type::Confuse, glm::vec3{1.0f, 0.3f, 0.3f},
+                           15.0f, block.options.position,
+                           manager_.getTexture("powerup_confuse"));
+  }
+  if (shouldSpawn(15)) {
+    powerups_.emplace_back(Powerup::Type::Chaos, glm::vec3{0.9f, 0.25f, 0.25f},
+                           15.0f, block.options.position,
+                           manager_.getTexture("powerup_chaos"));
+  }
+}
+
+void Game::updatePowerups(GLfloat dt) {
+  for (auto &powerup : powerups_) {
+    powerup.options.position += powerup.velocity * dt;
+    if (powerup.activated) {
+      powerup.duration -= dt;
+      if (powerup.duration <= 0.0f) {
+        powerup.activated = false;
+        if (!isOtherPowerupActive(powerups_, powerup.type)) {
+          switch (powerup.type) {
+            case Powerup::Type::Sticky: {
+              ball_->sticky = false;
+              player_->options.color = glm::vec3{1.0f};
+            } break;
+            case Powerup::Type::PassThrough: {
+              ball_->passthrough = false;
+              ball_->options.color = glm::vec3{1.0f};
+            } break;
+            case Powerup::Type::Confuse:
+              effects_->confuse = false;
+              break;
+            case Powerup::Type::Chaos:
+              effects_->chaos = false;
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    }
+  }
+
+  powerups_.erase(std::remove_if(powerups_.begin(), powerups_.end(),
+                                 [](const auto &powerup) {
+                                   return powerup.destroyed &&
+                                          !powerup.activated;
+                                 }),
+                  powerups_.end());
+}
+
+void Game::activatePowerup(Powerup &powerup) {
+  switch (powerup.type) {
+    case Powerup::Type::Speed:
+      ball_->velocity *= 1.2;
+      break;
+    case Powerup::Type::Sticky: {
+      ball_->sticky = true;
+      player_->options.color = glm::vec3{1.0f, 0.5f, 1.0f};
+    } break;
+    case Powerup::Type::PassThrough: {
+      ball_->passthrough = true;
+      ball_->options.color = glm::vec3{1.0f, 0.5f, 0.5f};
+    } break;
+    case Powerup::Type::PadSizeIncrease:
+      player_->options.size.x += 50;
+      break;
+    case Powerup::Type::Confuse: {
+      if (!effects_->chaos) {
+        effects_->confuse = true;
+      }
+    } break;
+    case Powerup::Type::Chaos: {
+      if (!effects_->confuse) {
+        effects_->chaos = true;
+      }
+    } break;
+  }
 }

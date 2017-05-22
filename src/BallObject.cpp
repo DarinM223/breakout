@@ -4,8 +4,7 @@ BallObject::BallObject(glm::vec2 pos, GLfloat radius, glm::vec2 velocity,
                        Texture& sprite)
     : GameObject(pos, glm::vec2{radius * 2, radius * 2}, sprite,
                  glm::vec3{1.0f}, velocity),
-      radius(radius),
-      stuck(true) {}
+      radius(radius) {}
 
 const glm::vec2& BallObject::move(GLfloat dt, GLuint windowWidth) {
   if (!this->stuck) {

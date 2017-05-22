@@ -41,11 +41,57 @@ struct GameObject : public Drawable {
         isSolid(false),
         destroyed(false),
         sprite(sprite) {}
+  GameObject(const GameObject&) = default;
+  GameObject& operator=(GameObject&& other) {
+    options = other.options;
+    velocity = other.velocity;
+    isSolid = other.isSolid;
+    destroyed = other.destroyed;
+    sprite = std::move(other.sprite);
+    return *this;
+  }
 
   void draw(SpriteRenderer& renderer) override {
     if (!this->destroyed) {
       renderer.drawSprite(this->sprite, this->options);
     }
+  }
+};
+
+const glm::vec2 POWERUP_SIZE{60, 20};
+const glm::vec2 POWERUP_VELOCITY{0.0f, 150.0f};
+
+struct Powerup : public GameObject {
+  enum class Type {
+    Speed,
+    Sticky,
+    PassThrough,
+    PadSizeIncrease,
+    Confuse,
+    Chaos
+  };
+
+  Type type;
+  GLfloat duration;
+  bool activated;
+
+  Powerup(Type type, glm::vec3 color, GLfloat duration, glm::vec2 position,
+          Texture& texture)
+      : GameObject(position, POWERUP_SIZE, texture, color, POWERUP_VELOCITY),
+        type(type),
+        duration(duration),
+        activated(false) {}
+  Powerup(Powerup&&) = default;
+  Powerup& operator=(Powerup&& other) {
+    options = other.options;
+    velocity = other.velocity;
+    isSolid = other.isSolid;
+    destroyed = other.destroyed;
+    sprite = std::move(other.sprite);
+    type = other.type;
+    duration = other.duration;
+    activated = other.activated;
+    return *this;
   }
 };
 

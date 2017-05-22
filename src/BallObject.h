@@ -5,7 +5,9 @@
 
 struct BallObject : public GameObject {
   GLfloat radius;
-  GLboolean stuck;
+  GLboolean stuck{true};
+  GLboolean sticky{false};
+  GLboolean passthrough{false};
 
   BallObject() = delete;
   BallObject(glm::vec2 pos, GLfloat radius, glm::vec2 velocity,

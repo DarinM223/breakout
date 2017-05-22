@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <array>
 #include <memory>
+#include <vector>
 #include "BallObject.h"
 #include "Level.h"
 #include "Object.h"
@@ -35,6 +36,9 @@ class Game {
   void updateTime(GLfloat time);
 
   void setKey(int key, bool value) { keys_[key] = value; }
+  void spawnPowerups(const GameObject &block);
+  void updatePowerups(GLfloat dt);
+  void activatePowerup(Powerup &powerup);
 
  private:
   std::array<bool, 1024> keys_{};
@@ -55,6 +59,7 @@ class Game {
 
   std::unique_ptr<GameObject> player_{nullptr};
   std::unique_ptr<BallObject> ball_{nullptr};
+  std::vector<Powerup> powerups_;
   int width_;
   int height_;
 };
