@@ -38,16 +38,15 @@ class ScopedShader {
   bool valid_{true};
 };
 
-const char* ShaderLoadException::what() const noexcept {
-  std::ostringstream out;
-  out << "Could not load vertex shader file: " << vertexPath_
-      << " and fragment shader file: " << fragmentPath_;
-  return out.str().c_str();
+ShaderLoadException::ShaderLoadException(std::string vertexPath,
+                                         std::string fragmentPath) {
+  what_ = "Could not load vertex shader file: " + std::move(vertexPath) +
+          " and fragment shader file: " + std::move(fragmentPath);
 }
 
-const char* ShaderCompileException::what() const noexcept {
+ShaderCompileException::ShaderCompileException(Type type, std::string log) {
   std::string shaderTypeStr;
-  switch (type_) {
+  switch (type) {
     case ShaderCompileException::Type::Vertex:
       shaderTypeStr = "vertex";
       break;
@@ -55,13 +54,12 @@ const char* ShaderCompileException::what() const noexcept {
       shaderTypeStr = "fragment";
       break;
   }
-  std::ostringstream out;
-  out << "Could not compile " << shaderTypeStr << " shader: " << log_;
-  return out.str().c_str();
+
+  what_ = "Could not compile " + shaderTypeStr + " shader: " + std::move(log);
 }
 
-const char* ProgramLinkException::what() const noexcept {
-  return "Could not link program";
+ProgramLinkException::ProgramLinkException(std::string log) {
+  what_ = "Could not link program: " + std::move(log);
 }
 
 std::tuple<std::string, std::string> Shader::getShaderSrcs(

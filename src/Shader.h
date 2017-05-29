@@ -9,36 +9,31 @@
 
 class ShaderLoadException : public std::exception {
  public:
-  ShaderLoadException(std::string vertexPath, std::string fragmentPath)
-      : vertexPath_(std::move(vertexPath)),
-        fragmentPath_(std::move(fragmentPath)) {}
-  const char *what() const noexcept override;
+  ShaderLoadException(std::string vertexPath, std::string fragmentPath);
+  const char *what() const noexcept override { return what_.c_str(); }
 
  private:
-  std::string vertexPath_;
-  std::string fragmentPath_;
+  std::string what_;
 };
 
 class ShaderCompileException : public std::exception {
  public:
   enum class Type : bool { Vertex = false, Fragment = true };
 
-  ShaderCompileException(Type type, std::string log)
-      : type_(type), log_(std::move(log)) {}
-  const char *what() const noexcept override;
+  ShaderCompileException(Type type, std::string log);
+  const char *what() const noexcept override { return what_.c_str(); }
 
  private:
-  Type type_;
-  std::string log_;
+  std::string what_;
 };
 
 class ProgramLinkException : public std::exception {
  public:
-  ProgramLinkException(std::string log) : log_(std::move(log)) {}
-  const char *what() const noexcept override;
+  ProgramLinkException(std::string log);
+  const char *what() const noexcept override { return what_.c_str(); }
 
  private:
-  std::string log_;
+  std::string what_;
 };
 
 class Shader {
