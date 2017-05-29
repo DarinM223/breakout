@@ -21,6 +21,20 @@ SpriteRenderer::SpriteRenderer(Shader& shader) : shader_(shader) {
   glBindVertexArray(0);
 }
 
+SpriteRenderer::SpriteRenderer(SpriteRenderer&& other)
+    : shader_(other.shader_) {
+  vao_ = other.vao_;
+  other.valid_ = false;
+}
+
+SpriteRenderer& SpriteRenderer::operator=(SpriteRenderer&& other) {
+  this->release();
+  shader_ = std::move(other.shader_);
+  vao_ = other.vao_;
+  other.valid_ = false;
+  return *this;
+}
+
 void SpriteRenderer::drawSprite(Texture& texture,
                                 const RendererOptions& options) {
   shader_.use();

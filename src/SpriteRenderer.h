@@ -24,17 +24,8 @@ class SpriteRenderer {
   SpriteRenderer(const SpriteRenderer&) = delete;
   SpriteRenderer& operator=(const SpriteRenderer&) = delete;
 
-  SpriteRenderer(SpriteRenderer&& other) : shader_(other.shader_) {
-    vao_ = other.vao_;
-    other.valid_ = false;
-  }
-  SpriteRenderer& operator=(SpriteRenderer&& other) {
-    this->release();
-    shader_ = std::move(other.shader_);
-    vao_ = other.vao_;
-    other.valid_ = false;
-    return *this;
-  }
+  SpriteRenderer(SpriteRenderer&& other);
+  SpriteRenderer& operator=(SpriteRenderer&& other);
 
   void drawSprite(Texture& texture, const RendererOptions& options);
 

@@ -45,3 +45,15 @@ Texture::Texture(unsigned char* data, const Dimensions& dimensions,
 
   glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+Texture::Texture(Texture&& other) {
+  texture_ = other.texture_;
+  other.texture_ = -1;
+  other.valid_ = false;
+}
+Texture& Texture::operator=(Texture&& other) {
+  this->release();
+  texture_ = other.texture_;
+  other.valid_ = false;
+  return *this;
+}

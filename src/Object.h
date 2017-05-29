@@ -35,27 +35,11 @@ struct GameObject : public Drawable {
 
   GameObject(glm::vec2 pos, glm::vec2 size, Texture& sprite,
              glm::vec3 color = glm::vec3{1.0f},
-             glm::vec2 velocity = glm::vec2{0.0f, 0.0f})
-      : options(pos, size, 0.0f, color),
-        velocity(velocity),
-        isSolid(false),
-        destroyed(false),
-        sprite(sprite) {}
+             glm::vec2 velocity = glm::vec2{0.0f, 0.0f});
   GameObject(const GameObject&) = default;
-  GameObject& operator=(GameObject&& other) {
-    options = other.options;
-    velocity = other.velocity;
-    isSolid = other.isSolid;
-    destroyed = other.destroyed;
-    sprite = std::move(other.sprite);
-    return *this;
-  }
+  GameObject& operator=(GameObject&& other);
 
-  void draw(SpriteRenderer& renderer) override {
-    if (!this->destroyed) {
-      renderer.drawSprite(this->sprite, this->options);
-    }
-  }
+  void draw(SpriteRenderer& renderer) override;
 };
 
 const glm::vec2 POWERUP_SIZE{60, 20};
@@ -76,23 +60,9 @@ struct Powerup : public GameObject {
   bool activated;
 
   Powerup(Type type, glm::vec3 color, GLfloat duration, glm::vec2 position,
-          Texture& texture)
-      : GameObject(position, POWERUP_SIZE, texture, color, POWERUP_VELOCITY),
-        type(type),
-        duration(duration),
-        activated(false) {}
+          Texture& texture);
   Powerup(Powerup&&) = default;
-  Powerup& operator=(Powerup&& other) {
-    options = other.options;
-    velocity = other.velocity;
-    isSolid = other.isSolid;
-    destroyed = other.destroyed;
-    sprite = std::move(other.sprite);
-    type = other.type;
-    duration = other.duration;
-    activated = other.activated;
-    return *this;
-  }
+  Powerup& operator=(Powerup&& other);
 };
 
 GameObject blockToDrawable(ResourceManager& manager, GLuint tile, GLuint x,

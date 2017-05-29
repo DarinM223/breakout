@@ -3,7 +3,6 @@
 
 #include <exception>
 #include <string>
-#include "stb_image.h"
 
 class ImageLoadException : public std::exception {
  public:
@@ -12,10 +11,8 @@ class ImageLoadException : public std::exception {
 
 class Image {
  public:
-  Image(std::string path) {
-    data_ = stbi_load(path.c_str(), &width_, &height_, &nrComponents_, 0);
-  }
-  ~Image() { stbi_image_free(data_); }
+  Image(std::string path);
+  ~Image();
   unsigned char *get() const noexcept { return data_; }
   int width() const noexcept { return width_; }
   int height() const noexcept { return height_; }

@@ -39,17 +39,8 @@ class Texture {
   Texture(const Texture &) = delete;
   Texture &operator=(const Texture &) = delete;
 
-  Texture(Texture &&other) {
-    texture_ = other.texture_;
-    other.texture_ = -1;
-    other.valid_ = false;
-  }
-  Texture &operator=(Texture &&other) {
-    this->release();
-    texture_ = other.texture_;
-    other.valid_ = false;
-    return *this;
-  }
+  Texture(Texture &&other);
+  Texture &operator=(Texture &&other);
 
   void bind() { glBindTexture(GL_TEXTURE_2D, texture_); }
   GLuint id() const noexcept { return texture_; }

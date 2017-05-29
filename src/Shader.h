@@ -50,16 +50,8 @@ class Shader {
   Shader(const Shader &) = delete;
   Shader &operator=(const Shader &) = delete;
 
-  Shader(Shader &&other) {
-    program_ = other.program_;
-    other.valid_ = false;
-  }
-  Shader &operator=(Shader &&other) {
-    this->release();
-    program_ = other.program_;
-    other.valid_ = false;
-    return *this;
-  }
+  Shader(Shader &&other);
+  Shader &operator=(Shader &&other);
 
   void use() noexcept { glUseProgram(program_); }
   GLuint program() const noexcept { return program_; }

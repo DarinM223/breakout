@@ -132,6 +132,18 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath) {
   }
 }
 
+Shader::Shader(Shader&& other) {
+  program_ = other.program_;
+  other.valid_ = false;
+}
+
+Shader& Shader::operator=(Shader&& other) {
+  this->release();
+  program_ = other.program_;
+  other.valid_ = false;
+  return *this;
+}
+
 void Shader::setMatrix4(const char* name, const glm::mat4& matrix) {
   auto location = glGetUniformLocation(program_, name);
   glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));

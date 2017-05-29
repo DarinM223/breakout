@@ -1,7 +1,49 @@
 #include "Object.h"
 #include <stdexcept>
 
-GameObject blockToDrawable(ResourceManager &manager, GLuint tile, GLuint x,
+GameObject::GameObject(glm::vec2 pos, glm::vec2 size, Texture& sprite,
+                       glm::vec3 color, glm::vec2 velocity)
+    : options(pos, size, 0.0f, color),
+      velocity(velocity),
+      isSolid(false),
+      destroyed(false),
+      sprite(sprite) {}
+
+GameObject& GameObject::operator=(GameObject&& other) {
+  options = other.options;
+  velocity = other.velocity;
+  isSolid = other.isSolid;
+  destroyed = other.destroyed;
+  sprite = std::move(other.sprite);
+  return *this;
+}
+
+void GameObject::draw(SpriteRenderer& renderer) {
+  if (!this->destroyed) {
+    renderer.drawSprite(this->sprite, this->options);
+  }
+}
+
+Powerup::Powerup(Type type, glm::vec3 color, GLfloat duration,
+                 glm::vec2 position, Texture& texture)
+    : GameObject(position, POWERUP_SIZE, texture, color, POWERUP_VELOCITY),
+      type(type),
+      duration(duration),
+      activated(false) {}
+
+Powerup& Powerup::operator=(Powerup&& other) {
+  options = other.options;
+  velocity = other.velocity;
+  isSolid = other.isSolid;
+  destroyed = other.destroyed;
+  sprite = std::move(other.sprite);
+  type = other.type;
+  duration = other.duration;
+  activated = other.activated;
+  return *this;
+}
+
+GameObject blockToDrawable(ResourceManager& manager, GLuint tile, GLuint x,
                            GLuint y, GLfloat unitWidth, GLfloat unitHeight) {
   glm::vec2 pos{unitWidth * x, unitHeight * y};
   glm::vec2 size{unitWidth, unitHeight};

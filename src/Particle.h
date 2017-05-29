@@ -26,24 +26,8 @@ class ParticleGenerator {
   ParticleGenerator(const ParticleGenerator&) = delete;
   ParticleGenerator& operator=(const ParticleGenerator&) = delete;
 
-  ParticleGenerator(ParticleGenerator&& other)
-      : shader_(other.shader_), texture_(other.texture_) {
-    particles_ = std::move(other.particles_);
-    amount_ = other.amount_;
-    vao_ = other.vao_;
-    other.valid_ = false;
-  }
-
-  ParticleGenerator& operator=(ParticleGenerator&& other) {
-    this->release();
-    shader_ = std::move(other.shader_);
-    texture_ = std::move(other.texture_);
-    particles_ = std::move(other.particles_);
-    amount_ = other.amount_;
-    vao_ = other.vao_;
-    other.valid_ = false;
-    return *this;
-  }
+  ParticleGenerator(ParticleGenerator&& other);
+  ParticleGenerator& operator=(ParticleGenerator&& other);
 
   void update(GLfloat dt, GameObject& object, GLuint newParticles,
               glm::vec2 offset);
