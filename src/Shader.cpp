@@ -79,7 +79,7 @@ std::tuple<std::string, std::string> Shader::getShaderSrcs(
     vertexFile.close();
     fragmentFile.close();
     return std::make_tuple(vertexStream.str(), fragmentStream.str());
-  } catch (std::ifstream::failure e) {
+  } catch (const std::ifstream::failure& e) {
     throw ShaderLoadException{vertexPath, fragmentPath};
   }
 }
